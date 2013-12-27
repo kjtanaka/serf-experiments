@@ -1,0 +1,33 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: host1
+    driver_config:
+      box: opscode-centos-6.5
+      box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box
+      network:
+      - ["private_network", {ip: "192.168.33.31"}]
+      customize:
+        memory: 256
+        cpuexecutioncap: 50
+      vm_hostname: host1
+  - name: host2
+    driver_config:
+      box: opscode-centos-6.5
+      box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box
+      network:
+      - ["private_network", {ip: "192.168.33.32"}]
+      customize:
+        memory: 256
+        cpuexecutioncap: 50
+      vm_hostname: host2
+
+suites:
+  - name: default
+    run_list:
+    attributes:
