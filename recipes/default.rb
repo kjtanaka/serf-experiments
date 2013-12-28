@@ -13,6 +13,11 @@ packages.each do |package|
     end
 end
 
+execute "update 127.0.0.1" do
+  command "sed -i -e \"s|127.0.0.1.*|127.0.0.1 localhost localhost.localdomain|\" /etc/hosts"
+  not_if "grep \"127.0.0.1 localhost localhost.localdomain\" /etc/hosts"
+end
+
 remote_file "#{serf_download_dir}/serf-#{serf_version}.zip" do
   source "#{serf_download_url}"
   mode "0644"
@@ -21,7 +26,7 @@ remote_file "#{serf_download_dir}/serf-#{serf_version}.zip" do
   action :create_if_missing
 end
 
-directory "/usr/local/serf/bin" do
+directory "/opt/serf/exec" do
   owner "root"
   group "root"
   mode 00755
@@ -29,25 +34,21 @@ directory "/usr/local/serf/bin" do
   action :create
 end
 
-execute "update 127.0.0.1" do
-  command "sed -i -e \"s|127.0.0.1.*|127.0.0.1 localhost localhost.localdomain|\" /etc/hosts"
-  not_if "grep \"127.0.0.1 localhost localhost.localdomain\" /etc/hosts"
-end
-
 execute "unzip serf zip file" do
-  command "unzip serf-#{serf_version}.zip -d /usr/local/serf/bin"
+  command "unzip serf-#{serf_version}.zip -d /opt/serf/exec"
   cwd "#{serf_download_dir}"
-  creates "/usr/local/serf/bin/serf"
+  creates "/opt/serf/exec/serf"
 end
 
-directory "/etc/serf" do
+directory "/opt/serf/etc" do
   owner "root"
   group "root"
   mode "0755"
+  recursive true
   action :create
 end
 
-template "/etc/serf/serf.json" do
+template "/opt/serf/etc/serf.json" do
   source "conf/serf.json.erb"
   mode "0644"
   owner "root"
@@ -57,7 +58,7 @@ template "/etc/serf/serf.json" do
     :bind_address => my_address)
 end
 
-cookbook_file "/usr/local/serf/bin/join.sh" do
+cookbook_file "/opt/serf/exec/join.sh" do
   source "exec/join.sh"
   mode "0700"
   owner "root"
@@ -65,7 +66,7 @@ cookbook_file "/usr/local/serf/bin/join.sh" do
   action :create
 end
 
-cookbook_file "/usr/local/serf/bin/leave.sh" do
+cookbook_file "/opt/serf/exec/leave.sh" do
   source "exec/leave.sh"
   mode "0700"
   owner "root"
@@ -80,3 +81,12 @@ cookbook_file "/etc/init.d/serf" do
   group "root"
   action :create
 end
+
+execute "restart serf" do
+  command "/etc/init.d/serf restart"
+end
+
+execute "check config serf on" do
+  command "chkconfig serf on"
+end
+

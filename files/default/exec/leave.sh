@@ -10,4 +10,4 @@ if [[ $? == 0 ]]; then
   sed -i -e "/$ADDRESS $HOSTNAME/d" /etc/hosts
 fi
 
-echo `date` deleting $ADDRESS $HOSTNAME from /etc/hosts >> $LOGFILE
+echo "    $(date +%Y/%m/%d %H:%M:%S) [INFO] leave.sh: Deleted $ADDRESS $HOSTNAME from /etc/hosts" >> $LOGFILE

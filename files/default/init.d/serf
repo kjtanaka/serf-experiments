@@ -8,24 +8,26 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-exec="/usr/local/serf/bin/serf"
-options="agent -config-file=/etc/serf/serf.json"
+exec="/opt/serf/exec/serf"
 logfile="/var/log/serf.log"
 prog="serf"
-config=/etc/serf/serf.json
-
-lockfile=/var/lock/subsys/$prog
+config="/opt/serf/etc/serf.json"
+options="agent -config-file=$config"
 
 start() {
     [ -x $exec ] || exit 5
     [ -f $config ] || exit 6
-    echo -n $"Starting $prog: "
+    echo $"Starting ${prog}... "
     $exec $options >> $logfile &
+    sleep 3
+    echo "Done."
 }
 
 stop() {
-    echo -n $"Stopping $prog: "
+    echo $"Stopping ${prog}... "
     $exec leave
+    sleep 3
+    echo "Done."
 }
 
 restart() {
@@ -33,41 +35,18 @@ restart() {
     start
 }
 
-reload() {
-    restart
-}
-
-force_reload() {
-    restart
-}
-
-rh_status() {
-    # run checks to determine if the service is running or use generic status
-    status $prog
-}
-
-rh_status_q() {
-    rh_status >/dev/null 2>&1
-}
-
-
 case "$1" in
     start)
-        rh_status_q && exit 0
         $1
         ;;
     stop)
-        rh_status_q || exit 0
         $1
         ;;
     restart)
         $1
         ;;
-    status)
-        rh_status
-        ;;
     *)
-        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
+        echo $"Usage: $0 {start|stop|restart}"
         exit 2
 esac
 exit $?

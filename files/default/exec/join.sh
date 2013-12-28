@@ -10,4 +10,4 @@ if [[ $? != 0 ]]; then
   echo "$ADDRESS $HOSTNAME" >> /etc/hosts
 fi
 
-echo `date` adding $ADDRESS $HOSTNAME on /etc/hosts >> $LOGFILE
+echo "    $(date +%Y/%m/%d %H:%M:%S) [INFO] join.sh: Added $ADDRESS $HOSTNAME on /etc/hosts" >> $LOGFILE
