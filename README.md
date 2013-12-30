@@ -22,3 +22,4 @@ following directory tree.
 Take a look at ``/opt/serf/libexec/join.sh`` and ``/opt/serf/libexec/leave.sh``. 
 What it does is to update ``/etc/hosts`` when member-join and member-leave event happen.
 
+For more information is [here](http://kjtanaka.github.io/posts/2013/12/serf-experiment.html).
