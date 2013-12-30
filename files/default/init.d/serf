@@ -8,8 +8,8 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-exec="/opt/serf/exec/serf"
-logfile="/var/log/serf.log"
+exec="/opt/serf/sbin/serf"
+logfile="/opt/serf/var/log/serf.log"
 prog="serf"
 config="/opt/serf/etc/serf.json"
 options="agent -config-file=$config"
@@ -19,14 +19,13 @@ start() {
     [ -f $config ] || exit 6
     echo $"Starting ${prog}... "
     $exec $options >> $logfile &
-    sleep 3
+    sleep 1
     echo "Done."
 }
 
 stop() {
     echo $"Stopping ${prog}... "
     $exec leave
-    sleep 3
     echo "Done."
 }
 

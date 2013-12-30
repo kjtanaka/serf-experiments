@@ -26,18 +26,18 @@ remote_file "#{serf_download_dir}/serf-#{serf_version}.zip" do
   action :create_if_missing
 end
 
-directory "/opt/serf/exec" do
+directory "/opt/serf/sbin" do
   owner "root"
   group "root"
-  mode 00755
+  mode 00700
   recursive true
   action :create
 end
 
 execute "unzip serf zip file" do
-  command "unzip serf-#{serf_version}.zip -d /opt/serf/exec"
+  command "unzip serf-#{serf_version}.zip -d /opt/serf/sbin"
   cwd "#{serf_download_dir}"
-  creates "/opt/serf/exec/serf"
+  creates "/opt/serf/sbin/serf"
 end
 
 directory "/opt/serf/etc" do
@@ -58,16 +58,31 @@ template "/opt/serf/etc/serf.json" do
     :bind_address => my_address)
 end
 
-cookbook_file "/opt/serf/exec/join.sh" do
-  source "exec/join.sh"
+directory "/opt/serf/var/log" do
+  owner "root"
+  group "root"
+  mode 00755
+  recursive true
+  action :create
+end
+
+directory "/opt/serf/libexec" do
+  owner "root"
+  group "root"
+  mode 00755
+  action :create
+end
+
+cookbook_file "/opt/serf/libexec/join.sh" do
+  source "libexec/join.sh"
   mode "0700"
   owner "root"
   group "root"
   action :create
 end
 
-cookbook_file "/opt/serf/exec/leave.sh" do
-  source "exec/leave.sh"
+cookbook_file "/opt/serf/libexec/leave.sh" do
+  source "libexec/leave.sh"
   mode "0700"
   owner "root"
   group "root"
